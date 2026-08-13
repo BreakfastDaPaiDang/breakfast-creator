@@ -77,7 +77,7 @@ class AssetCandidate:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, value: dict[str, Any]) -> "AssetCandidate":
+    def from_dict(cls, value: dict[str, Any]) -> AssetCandidate:
         value = dict(value)
         value["kind"] = AssetKind(value["kind"])
         return cls(**value)

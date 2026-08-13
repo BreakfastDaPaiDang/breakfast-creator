@@ -10,7 +10,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 from .models import AssetCandidate
 
-
 Image.MAX_IMAGE_PIXELS = 40_000_000
 
 
@@ -49,7 +48,7 @@ def _download_cover(candidate: AssetCandidate, cover_dir: Path) -> Path | None:
         with Image.open(io.BytesIO(data)) as source:
             source.convert("RGB").save(destination, "JPEG", quality=86)
         return destination
-    except Exception:
+    except (OSError, ValueError):
         return None
 
 

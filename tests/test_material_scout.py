@@ -6,8 +6,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from material_scout.health import HealthStatus, diagnose_sources
 from material_scout.models import AssetCandidate, AssetKind, RightsStatus
-from material_scout.providers import BilibiliSearchAdapter, YtDlpSearchAdapter
+from material_scout.providers import (
+    BilibiliCliSearchAdapter,
+    BilibiliSearchAdapter,
+    FallbackSearchAdapter,
+    ProviderSearchResult,
+    YtDlpAcquisitionAdapter,
+    YtDlpSearchAdapter,
+)
 from material_scout.service import MaterialScout, load_candidates, select_candidates
 from material_scout.watermarks import decide_mark_treatment
 
@@ -88,6 +96,73 @@ class MaterialScoutTests(unittest.TestCase):
         self.assertEqual("https://i0.hdslb.com/test.jpg", candidate.thumbnail_url)
         self.assertEqual("https://www.bilibili.com/video/BV1test", candidate.source_url)
 
+    def test_bilibili_cli_search_normalizes_stable_envelope(self) -> None:
+        payload = {
+            "ok": True,
+            "schema_version": "1",
+            "data": [
+                {
+                    "id": "BV1agent",
+                    "bvid": "BV1agent",
+                    "title": "Agent video",
+                    "author": "Creator",
+                    "play": 123,
+                    "duration": "1:02:03",
+                }
+            ],
+        }
+
+        def runner(_: list[str]) -> subprocess.CompletedProcess[str]:
+            return subprocess.CompletedProcess([], 0, json.dumps(payload), "")
+
+        adapter = BilibiliCliSearchAdapter(
+            runner=runner,
+            metadata_fetcher=lambda _: None,
+            retry_delay_seconds=0,
+        )
+        result = adapter.search("AI", 1)
+        self.assertEqual("bilibili-cli", result.adapter)
+        self.assertEqual(3723, result[0].duration_seconds)
+        self.assertEqual("bilibili:BV1agent", result[0].candidate_id)
+        self.assertTrue(result.warnings)
+
+    def test_search_fallback_reports_primary_failure(self) -> None:
+        class FailedAdapter:
+            source = "bilibili"
+
+            def search(self, query: str, limit: int) -> ProviderSearchResult:
+                raise RuntimeError("primary failed with HTTP 412")
+
+        class WorkingAdapter:
+            source = "bilibili"
+
+            def search(self, query: str, limit: int) -> ProviderSearchResult:
+                return ProviderSearchResult([], adapter="fallback")
+
+        result = FallbackSearchAdapter(
+            "bilibili", [FailedAdapter(), WorkingAdapter()]
+        ).search("AI", 1)
+        self.assertEqual("fallback", result.adapter)
+        self.assertIn("primary failed", result.warnings[0])
+
+    def test_subtitle_failure_does_not_discard_acquired_media(self) -> None:
+        calls = 0
+
+        def runner(command: list[str]) -> subprocess.CompletedProcess[str]:
+            nonlocal calls
+            calls += 1
+            if "--write-subs" in command:
+                return subprocess.CompletedProcess(command, 1, "", "HTTP Error 429")
+            return subprocess.CompletedProcess(command, 0, "ok", "")
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = YtDlpAcquisitionAdapter(
+                "youtube", runner=runner, executable=["yt-dlp"]
+            ).acquire("https://example.test/video", Path(directory), "proxy")
+        self.assertEqual(2, calls)
+        self.assertEqual("yt-dlp", result.adapter)
+        self.assertIn("subtitle acquisition degraded", result.warnings[0])
+
     def test_search_normalizes_and_deduplicates_candidates(self) -> None:
         payload = {
             "entries": [
@@ -167,6 +242,22 @@ class MaterialScoutTests(unittest.TestCase):
         self.assertFalse(decide_mark_treatment("owned", "unknown", "inpaint").allowed)
         self.assertTrue(decide_mark_treatment("owned", "allowed", "inpaint").allowed)
         self.assertTrue(decide_mark_treatment("unknown", "unknown", "preserve").allowed)
+
+    def test_doctor_distinguishes_required_and_optional_tools(self) -> None:
+        def runner(command: list[str]) -> subprocess.CompletedProcess[str]:
+            if "yt_dlp" in command:
+                return subprocess.CompletedProcess(command, 0, "2026.07.04\n", "")
+            return subprocess.CompletedProcess(command, 0, "v22.0.0\n", "")
+
+        available = {"node": "node", "ffmpeg": "ffmpeg"}
+        report = diagnose_sources(
+            runner=runner,
+            locator=lambda name: available.get(name),
+        )
+        self.assertEqual(HealthStatus.DEGRADED, report.status)
+        by_name = {check.name: check for check in report.checks}
+        self.assertEqual(HealthStatus.OK, by_name["yt-dlp"].status)
+        self.assertEqual(HealthStatus.DEGRADED, by_name["bilibili-search-primary"].status)
 
 
 if __name__ == "__main__":

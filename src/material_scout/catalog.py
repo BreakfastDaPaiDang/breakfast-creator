@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
+from typing import Self
 
 from .models import ContentAsset, Representation
-
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -75,14 +75,24 @@ class Catalog:
     def __init__(self, path: Path):
         self.path = path
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.connection = sqlite3.connect(path)
+        self.connection = sqlite3.connect(path, timeout=5.0)
         self.connection.row_factory = sqlite3.Row
+        self.connection.execute("PRAGMA busy_timeout = 5000")
+        self.connection.execute("PRAGMA journal_mode = WAL")
+        schema_version = int(self.connection.execute("PRAGMA user_version").fetchone()[0])
+        if schema_version > 1:
+            self.connection.close()
+            raise RuntimeError(
+                f"Catalog schema {schema_version} is newer than supported schema 1."
+            )
         self.connection.executescript(SCHEMA)
+        if schema_version == 0:
+            self.connection.execute("PRAGMA user_version = 1")
 
     def close(self) -> None:
         self.connection.close()
 
-    def __enter__(self) -> "Catalog":
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *_: object) -> None:

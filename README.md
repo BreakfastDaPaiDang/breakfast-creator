@@ -31,6 +31,7 @@ uv run python automation/transcribe.py input.mp4 --output projects/demo/transcri
 powershell -ExecutionPolicy Bypass -File automation/new-project.ps1 -Slug my-topic
 
 # 搜索 B 站和 YouTube，生成候选 JSON、封面拼图和 HTML
+uv run material-scout doctor --network
 uv run material-scout search --query "AI 数据中心" --source bilibili --source youtube --limit 10
 
 # 将任意本地文件登记为内容资产

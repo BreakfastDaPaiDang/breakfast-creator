@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from .catalog import Catalog
+from .health import HealthStatus, diagnose_sources, format_report, report_json
 from .models import RightsStatus
 from .service import MaterialScout, load_candidates, select_candidates
 from .watermarks import (
@@ -14,7 +15,6 @@ from .watermarks import (
     MARK_TREATMENTS,
     decide_mark_treatment,
 )
-
 
 DEFAULT_LIBRARY = Path("media-library")
 
@@ -26,6 +26,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--library", type=Path, default=DEFAULT_LIBRARY)
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    doctor = subparsers.add_parser("doctor", help="Check source adapters and media dependencies")
+    doctor.add_argument("--network", action="store_true", help="Run one live query per source")
+    doctor.add_argument("--json", action="store_true", help="Emit a machine-readable report")
 
     search = subparsers.add_parser("search", help="Search normalized source adapters")
     search.add_argument("--query", action="append", required=True, help="Repeat for multiple queries")
@@ -83,6 +87,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     scout = MaterialScout(args.library)
     try:
+        if args.command == "doctor":
+            report = diagnose_sources(network=args.network)
+            print(report_json(report) if args.json else format_report(report))
+            return 2 if report.status is HealthStatus.ERROR else 0
+
         if args.command == "search":
             sources = args.source or ["youtube", "bilibili"]
             session = scout.search(args.query, sources, args.limit, args.output)

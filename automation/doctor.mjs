@@ -5,9 +5,6 @@ const checks = [
   ["npm", ["--version"]],
   ["python", ["--version"]],
   ["uv", ["--version"]],
-  ["ffmpeg", ["-version"]],
-  ["ffprobe", ["-version"]],
-  ["yt-dlp", ["--version"]],
 ];
 
 let failed = false;
@@ -22,5 +19,12 @@ for (const [command, args] of checks) {
   }
 }
 
-process.exitCode = failed ? 1 : 0;
+const material = spawnSync("uv", ["run", "material-scout", "doctor"], {
+  encoding: "utf8",
+  shell: true,
+});
+const materialOutput = `${material.stdout ?? ""}${material.stderr ?? ""}`.trim();
+if (materialOutput) console.log(materialOutput);
+if (material.status !== 0) failed = true;
 
+process.exitCode = failed ? 1 : 0;

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-
 MARK_KINDS = {"platform", "creator", "stock", "brand", "unknown"}
 MARK_AUTHORIZATIONS = {"unknown", "allowed", "forbidden"}
 MARK_TREATMENTS = {"preserve", "clean-master", "crop", "mask", "inpaint"}

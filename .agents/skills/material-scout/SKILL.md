@@ -7,6 +7,16 @@ description: Discover, acquire, register, and catalog reusable content assets wi
 
 Use the workspace CLI as the single interface. Treat video, image, audio, document, font, and template files as content assets; do not create platform-specific project workflows.
 
+## Check source health
+
+Run this before the first platform operation in a session, and again after a 403, 412, 429, missing-caption, or empty-result failure:
+
+```powershell
+uv run material-scout doctor --network
+```
+
+Read [source-reliability.md](references/source-reliability.md) when a source is degraded. A missing YouTube PO Token provider is an expected degraded state until a real download requires it; do not install or paste tokens speculatively.
+
 ## Discover candidates
 
 Derive several concrete queries from the brief or script: named entities, literal actions, visual metaphors, locations, and negative constraints. Keep each query short.
@@ -22,6 +32,8 @@ uv run material-scout search `
 
 Read `candidates.json`, then inspect the numbered contact sheets. Select candidates by `#number`, normalized candidate ID, or remote video ID.
 
+For Bilibili, the CLI uses `bilibili-cli` first and yt-dlp second. For YouTube, it uses the project-locked yt-dlp package with Deno (preferred) or Node as its JavaScript runtime. Keep warnings in `candidates.json`; a successful fallback is still operational evidence worth retaining.
+
 ## Acquire selected candidates
 
 Acquire a low-resolution research proxy by default. This preserves bandwidth while providing media, descriptions, thumbnails, subtitles, and metadata for analysis.
@@ -34,6 +46,8 @@ uv run material-scout acquire `
 ```
 
 Use `--media none` to collect metadata and available captions without video. Use `--purpose production` or `--media master` only after recording a non-unknown rights status. Acquisition never proves permission to publish.
+
+Bilibili media acquisition uses yutto first and yt-dlp second. YouTube media and captions are separate best-effort stages: if caption retrieval fails, keep the acquired media and inspect `metadata.acquisition_warnings`. Use local ASR through `video-understand` or `krillinai-subtitle` when captions are absent.
 
 ## Register local assets
 

@@ -3,11 +3,10 @@ from __future__ import annotations
 import hashlib
 import json
 import mimetypes
-import subprocess
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
 
 from .catalog import Catalog
 from .contact_sheet import render_discovery_artifacts
@@ -20,7 +19,14 @@ from .models import (
     RightsStatus,
     infer_asset_kind,
 )
-from .providers import CommandRunner, SearchAdapter, default_adapters, run_command
+from .providers import (
+    AcquisitionAdapter,
+    CommandRunner,
+    SearchAdapter,
+    default_acquisition_adapters,
+    default_adapters,
+    run_command,
+)
 
 
 @dataclass(slots=True)
@@ -38,11 +44,17 @@ class MaterialScout:
         self,
         library_root: Path,
         adapters: dict[str, SearchAdapter] | None = None,
+        acquisition_adapters: dict[str, AcquisitionAdapter] | None = None,
         command_runner: CommandRunner = run_command,
     ):
         self.library_root = library_root.resolve()
         self.catalog_path = self.library_root / "catalog.sqlite3"
         self.adapters = adapters if adapters is not None else default_adapters(command_runner)
+        self.acquisition_adapters = (
+            acquisition_adapters
+            if acquisition_adapters is not None
+            else default_acquisition_adapters(command_runner)
+        )
         self.command_runner = command_runner
 
     def search(
@@ -68,7 +80,9 @@ class MaterialScout:
             adapter = self.adapters[source]
             for query in clean_queries:
                 try:
-                    for candidate in adapter.search(query, limit_per_query):
+                    result = adapter.search(query, limit_per_query)
+                    warnings.extend(result.warnings)
+                    for candidate in result.candidates:
                         merged.setdefault(candidate.candidate_id, candidate)
                 except RuntimeError as error:
                     warnings.append(str(error))
@@ -104,15 +118,14 @@ class MaterialScout:
         asset_dir = self.library_root / "assets" / asset_id
         representation_dir = asset_dir / "representations"
         representation_dir.mkdir(parents=True, exist_ok=True)
-        command = self._acquire_command(candidate.source_url, representation_dir, media)
-        result = self.command_runner(command)
-        if result.returncode != 0:
-            detail = result.stderr.strip() or result.stdout.strip() or "unknown yt-dlp error"
-            raise RuntimeError(f"Acquisition failed for {candidate.candidate_id}: {detail}")
+        adapter = self.acquisition_adapters.get(candidate.source)
+        if adapter is None:
+            raise ValueError(f"No acquisition adapter for source: {candidate.source}")
+        acquisition = adapter.acquire(candidate.source_url, representation_dir, media)
 
         representations = [
             _representation_for(path, media)
-            for path in sorted(representation_dir.iterdir())
+            for path in sorted(representation_dir.rglob("*"))
             if path.is_file()
         ]
         asset = ContentAsset(
@@ -134,6 +147,8 @@ class MaterialScout:
                 "requested_media": media,
                 "visible_mark_status": "unassessed",
                 "search_query": candidate.search_query,
+                "acquisition_adapter": acquisition.adapter,
+                "acquisition_warnings": acquisition.warnings,
             },
         )
         (asset_dir / "asset.json").write_text(
@@ -183,62 +198,14 @@ class MaterialScout:
             return catalog.list_assets(limit)
 
     def _new_session_dir(self) -> Path:
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        timestamp = datetime.now().astimezone().strftime("%Y%m%d-%H%M%S")
         return self.library_root / "sessions" / timestamp
-
-    @staticmethod
-    def _acquire_command(source_url: str, output_dir: Path, media: str) -> list[str]:
-        command = [
-            "yt-dlp",
-            "--ignore-config",
-            "--no-playlist",
-            "--windows-filenames",
-            "--no-overwrites",
-            "--write-info-json",
-            "--write-description",
-            "--write-thumbnail",
-            "--write-subs",
-            "--write-auto-subs",
-            "--sub-langs",
-            "zh.*,en.*",
-            "--convert-subs",
-            "srt",
-            "--paths",
-            str(output_dir),
-            "--output",
-            "source.%(ext)s",
-        ]
-        if media == "none":
-            command.append("--skip-download")
-        elif media == "proxy":
-            command.extend(
-                [
-                    "--format",
-                    "bestvideo[height<=480]+bestaudio/best[height<=480]",
-                    "--merge-output-format",
-                    "mp4",
-                ]
-            )
-        elif media == "master":
-            command.extend(
-                [
-                    "--format",
-                    "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
-                    "--merge-output-format",
-                    "mp4",
-                ]
-            )
-        else:
-            raise ValueError(f"Unknown media mode: {media}")
-        command.append(source_url)
-        return command
-
 
 def load_candidates(path: Path) -> list[AssetCandidate]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     values = payload.get("candidates") if isinstance(payload, dict) else payload
     if not isinstance(values, list):
-        raise ValueError("Candidate manifest must contain a candidates list.")
+        raise TypeError("Candidate manifest must contain a candidates list.")
     return [AssetCandidate.from_dict(value) for value in values]
 
 
@@ -269,7 +236,7 @@ def _representation_for(path: Path, media: str) -> Representation:
         role = RepresentationRole.THUMBNAIL
     elif suffix in {".srt", ".vtt", ".ass"}:
         role = RepresentationRole.SUBTITLE
-    elif suffix == ".json":
+    elif suffix in {".json", ".nfo"}:
         role = RepresentationRole.METADATA
     elif suffix in {".description", ".txt"}:
         role = RepresentationRole.DESCRIPTION
