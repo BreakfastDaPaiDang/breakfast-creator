@@ -1,0 +1,37 @@
+project:
+  title: ""
+  slug: ""
+  platform: ""
+  created_at: ""
+
+production:
+  status: draft
+  aspect_ratio: "9:16"
+  resolution: "1080x1920"
+  fps: 30
+  budget_limit_cny: 0
+  cost_actual_cny: 0
+
+sources: []
+# - asset_id: ""
+#   fragment_id: null
+#   representation: "proxy"
+#   url: ""
+#   author: ""
+#   rights_status: "unknown"
+#   retrieved_at: ""
+#   in: null
+#   out: null
+#   purpose: ""
+#   visible_mark_treatment: "preserve"
+
+generations: []
+# - provider: ""
+#   model: ""
+#   prompt_file: ""
+#   seed: null
+#   cost_cny: 0
+#   output: ""
+#   sha256: ""
+
+deliverables: []

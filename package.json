@@ -1,0 +1,25 @@
+{
+  "name": "agent-media-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent-native workspace for research, editing, motion graphics and video rendering",
+  "scripts": {
+    "doctor": "node automation/doctor.mjs",
+    "material:help": "uv run material-scout --help",
+    "material:test": "uv run python -m unittest discover -s tests -v",
+    "studio": "remotion studio studio/remotion/index.ts --browser-executable=\"C:/Program Files/Google/Chrome/Application/chrome.exe\"",
+    "render:smoke": "remotion render studio/remotion/index.ts SmokeTest renders/smoke-test.mp4 --browser-executable=\"C:/Program Files/Google/Chrome/Application/chrome.exe\"",
+    "hyperframes:doctor": "hyperframes doctor"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.509",
+    "@remotion/transitions": "4.0.509",
+    "hyperframes": "0.7.107",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.509"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

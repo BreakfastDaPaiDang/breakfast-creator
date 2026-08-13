@@ -1,0 +1,4 @@
+interface:
+  display_name: "Material Scout"
+  short_description: "Discover and catalog reusable content assets"
+  default_prompt: "Use $material-scout to find and prepare authorized content assets for this project."
