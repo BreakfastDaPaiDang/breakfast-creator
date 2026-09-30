@@ -47,7 +47,7 @@ uv run material-scout acquire `
 
 Use `--media none` to collect metadata and available captions without video. Use `--purpose production` or `--media master` only after recording a non-unknown rights status. Acquisition never proves permission to publish.
 
-Bilibili media acquisition uses yutto first and yt-dlp second. YouTube media and captions are separate best-effort stages: if caption retrieval fails, keep the acquired media and inspect `metadata.acquisition_warnings`. Use local ASR through `video-understand` or `krillinai-subtitle` when captions are absent.
+Bilibili media acquisition uses yutto first and yt-dlp second. YouTube media and captions are separate best-effort stages: if caption retrieval fails, keep the acquired media and inspect `metadata.acquisition_warnings`. When captions are absent, report the gap; this workspace has no local ASR installed.
 
 ## Register local assets
 
@@ -71,7 +71,7 @@ uv run material-scout mark record `
 uv run material-scout mark check --asset-id ASSET_ID --treatment inpaint
 ```
 
-Read [visible-marks.md](references/visible-marks.md) before proposing crop, mask, inpaint, or logo removal. Do not alter a third-party mark merely because a file is downloadable. When treatment is allowed, preserve the original and create a new audited representation; use the `ffmpeg` skill for deterministic crop or mask operations.
+Read [visible-marks.md](references/visible-marks.md) before proposing crop, mask, inpaint, or logo removal. Do not alter a third-party mark merely because a file is downloadable. When treatment is allowed, preserve the original and create a new audited representation; use FFmpeg for deterministic crop or mask operations.
 
 ## Handoff to editing
 

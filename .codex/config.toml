@@ -1,4 +1,0 @@
-[mcp_servers.openchatcut]
-url = "http://localhost:5199/api/external-mcp/mcp"
-bearer_token_env_var = "OPENCHATCUT_MCP_TOKEN"
-

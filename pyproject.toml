@@ -1,14 +1,10 @@
 [project]
 name = "agent-media-workspace"
 version = "0.1.0"
-description = "Local transcription and media automation helpers"
+description = "Research, comment collection and content asset tools for copywriting"
 requires-python = ">=3.12,<3.14"
 dependencies = [
-  "faster-whisper>=1.2,<2",
   "pillow>=11.3,<13",
-  "pysubs2>=1.8,<2",
-  "pyyaml>=6.0,<7",
-  "rich>=14,<15",
   "yt-dlp[default]>=2026.7.4",
 ]
 
