@@ -3,8 +3,6 @@
 .env.tmp
 .venv/
 node_modules/
-renders/*
-!renders/.gitkeep
 projects/*/assets/generated/
 projects/*/renders/
 projects/*/tmp/
@@ -20,7 +18,6 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
-/tools/
 .run/
 config/creator-profile.json
 config/creator-profile.json.tmp
