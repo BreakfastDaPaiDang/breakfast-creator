@@ -1,5 +1,6 @@
 .env
 .env.local
+.env.tmp
 .venv/
 node_modules/
 renders/*
@@ -11,6 +12,8 @@ media-library/cache/
 media-library/assets/
 media-library/sessions/
 media-library/catalog.sqlite3*
+media-library/comments/
+media-library/zhihu/
 !media-library/.gitkeep
 *.log
 __pycache__/
@@ -19,3 +22,8 @@ __pycache__/
 Thumbs.db
 /tools/
 .run/
+config/creator-profile.json
+config/creator-profile.json.tmp
+config/.write-lock.sqlite3*
+assets/references/style-examples/*
+!assets/references/style-examples/README.md

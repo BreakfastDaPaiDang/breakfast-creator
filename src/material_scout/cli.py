@@ -48,6 +48,11 @@ def build_parser() -> argparse.ArgumentParser:
     acquire.add_argument("--id", action="append", required=True, help="Candidate ID, remote ID, or #number")
     acquire.add_argument("--purpose", choices=["research", "production"], default="research")
     acquire.add_argument("--media", choices=["none", "proxy", "master"], default="proxy")
+    transcript = subparsers.add_parser("transcript", help="Fetch Bilibili platform captions using local credentials; JSON output")
+    transcript.add_argument("target")
+    transcript.add_argument("--output", type=Path, required=True)
+    transcript.add_argument("--part", type=int, default=1)
+    transcript.add_argument("--env-file", type=Path, default=Path(".env"))
     acquire.add_argument(
         "--rights-status",
         choices=[status.value for status in RightsStatus],
@@ -85,6 +90,22 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    if args.command == "transcript":
+        from comment_scout.access import ScoutError
+        from .transcript import acquire_transcript
+        try:
+            result = acquire_transcript(args.target, args.output, env_file=args.env_file,
+                                        library=args.library / "comments", part=args.part)
+            print(json.dumps(result, ensure_ascii=False))
+            return 0
+        except ScoutError as error:
+            print(json.dumps(error.result(), ensure_ascii=False))
+            return error.exit_code
+        except (OSError, ValueError, TypeError, KeyError):
+            print(json.dumps({"ok": False, "status": "local_error", "message": "字幕处理失败，请检查输出目录与输入结构。"}, ensure_ascii=False))
+            return 4
     scout = MaterialScout(args.library)
     try:
         if args.command == "doctor":

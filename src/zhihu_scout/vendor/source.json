@@ -1,0 +1,6 @@
+{
+  "source": "https://raw.githubusercontent.com/meurz/zhihu-mcp-server/main/zse-signer.js",
+  "sha256": "67e1579f286fa51bc1084691af2d76033b69e83c973b487fd0cffc83f1b40dae",
+  "license": "AGPL-3.0",
+  "upstream": "https://github.com/zly2006/zhihu-plus-plus"
+}

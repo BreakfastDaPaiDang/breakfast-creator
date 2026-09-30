@@ -4,6 +4,7 @@
 
 ## 当前能力
 
+- 早饭精英视频助手：本地用户信息、风格范例和平台连接配置页，`uv run breakfast-assistant serve`，见 [使用说明](docs/breakfast-assistant.md)
 - FFmpeg / ffprobe：剪辑、转码、混音、字幕、质检
 - yt-dlp：获取有权使用的在线视频和字幕
 - faster-whisper：本地语音转录与词级时间戳
@@ -11,6 +12,11 @@
 - HyperFrames：HTML/CSS/GSAP 动效视频
 - Agent Skills：视频编排、对话式剪辑、本地化
 - Material Scout：通用内容资产搜索、候选拼图、归档和权利门禁
+- `material-scout transcript`：复用本地凭据获取B站平台字幕，生成带时间戳的文案阅读稿，见 [使用说明](docs/bilibili-transcript.md)
+- Comment Scout：给 Agent 使用的 B 站评论接口采集、断点恢复、CSV 导入与讨论串阅读包（无需操作浏览器）
+- Zhihu Scout：知乎问题搜索、回答与评论采集、按赞数筛选和原文阅读包；Python + Node.js，无浏览器运行依赖，2026-09-16已完成真实Cookie小样本联调，见 [使用说明](docs/zhihu-scout.md)
+
+评论工具使用及 Agent 状态处理见 [docs/comment-scout.md](docs/comment-scout.md)。2026-09-15已完成真实账号下的评论与字幕小样本联调；平台限制和采集范围见各次报告。
 
 ## 常用命令
 

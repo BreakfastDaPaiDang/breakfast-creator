@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="studio-token" content="__STUDIO_TOKEN__">
+  <title>创作设置 · 早饭精英视频助手</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23efbc57' d='M6 28a18 18 0 0136 0z'/%3E%3Cpath stroke='%235e4831' stroke-width='3' d='M4 34h40M13 41h22'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-sun" viewBox="0 0 48 48"><path d="M8 29a16 16 0 0 1 32 0M4 34h40M12 41h24M24 2v5M5 12l4 4M43 12l-4 4"/><path d="M18 29v-9l12 5-12 4Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 19V5a2 2 0 0 1 2-2h5l3 4h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2ZM3 9h18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 4v3"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V3H3v13h5"/></symbol>
+    <symbol id="i-bili" viewBox="0 0 32 32"><rect x="4" y="9" width="24" height="18" rx="5"/><path d="m10 3 4 6m8-6-4 6M11 15v4m10-4v4m-8 3 3 1 3-1"/></symbol>
+  </defs></svg>
+
+  <aside class="sidebar">
+    <a class="brand" href="#profile" aria-label="早饭精英视频助手 首页">
+      <svg class="brand-symbol"><use href="#i-sun"/></svg>
+      <span><strong>早饭精英</strong><small>视频助手</small></span>
+    </a>
+    <nav aria-label="创作设置">
+      <a class="nav-item active" href="#profile"><svg><use href="#i-user"/></svg>用户信息<span class="nav-dot" id="nav-dot"></span></a>
+      <a class="nav-item" href="#capabilities"><svg><use href="#i-grid"/></svg>更多能力</a>
+    </nav>
+    <div class="sidebar-foot"><span class="tiny-sun"></span><p>好的表达<br>有自己的方向。</p><span class="local-label"><svg><use href="#i-lock"/></svg>本地工作区</span></div>
+  </aside>
+
+  <main>
+    <header class="page-heading">
+      <div><p class="eyebrow">创 作 设 置</p><h1>让下一篇文案，<br class="mobile-break">更像你<span>。</span></h1></div>
+      <div class="sunrise-art" aria-hidden="true"><div class="orb"></div><div class="horizon"></div><div class="horizon short"></div><span class="ray r1"></span><span class="ray r2"></span><span class="ray r3"></span></div>
+    </header>
+
+    <section class="profile-panel" id="profile" aria-labelledby="profile-label">
+      <div class="section-top"><div class="section-name"><svg><use href="#i-user"/></svg><h2 id="profile-label">用户信息</h2><span class="required">必填</span></div><span class="status-pill" id="profile-state">读取中</span></div>
+      <form id="profile-form">
+        <label class="sr-only" for="user-info">用户信息，可自由描述；人设、立场、内容、粉丝仅供参考</label>
+        <textarea id="user-info" name="user_info" maxlength="30000" required spellcheck="false" placeholder="写下你想让我们了解的自己。&#10;&#10;不知道从哪开始？可以聊聊：&#10;人设 · 观众眼中的你　　立场 · 你看问题的角度&#10;内容 · 你想长期做什么　粉丝 · 他们在意什么"></textarea>
+        <div id="conflict" class="conflict" hidden><span>信息已在别处更新，你的草稿仍保留。</span><button type="button" id="load-latest">载入最新内容</button></div>
+        <p id="profile-error" class="form-error" role="alert" hidden></p>
+        <div class="profile-bottom"><span class="save-note" id="save-note"><svg><use href="#i-lock"/></svg><span id="save-message">仅保存在本机</span></span><button class="primary" id="save-profile" type="submit" disabled><span>保存</span><svg><use href="#i-arrow"/></svg></button></div>
+      </form>
+    </section>
+
+    <section class="capabilities" id="capabilities" aria-labelledby="capabilities-label">
+      <div class="capabilities-heading"><h2 id="capabilities-label">更多可能</h2><span>选填</span><div class="heading-rule"></div></div>
+      <div class="capability-grid">
+        <article class="capability-card examples-card">
+          <div class="card-top"><div class="cap-icon folder-icon"><svg><use href="#i-folder"/></svg></div><span class="card-status" id="examples-status">读取中</span></div>
+          <h3>风格范例</h3><p>你的满意作品，就是最好的参照。</p>
+          <div class="card-bottom"><button class="text-action" id="open-examples">放入文案或视频<svg><use href="#i-arrow"/></svg></button><button class="icon-button quiet" id="examples-details" aria-label="查看范例文件夹" title="查看文件夹路径"><svg><use href="#i-folder"/></svg></button></div>
+        </article>
+        <article class="capability-card">
+          <div class="card-top"><div class="cap-icon bili-icon"><svg viewBox="0 0 32 32"><use href="#i-bili"/></svg></div><span class="card-status" id="bilibili-status">读取中</span></div>
+          <h3>B 站</h3><p>找视频 · 取字幕 · 读评论</p>
+          <div class="card-bottom"><button class="text-action" data-connect="bilibili"><span id="bilibili-action">连接</span><svg><use href="#i-arrow"/></svg></button><button class="help-button" data-connect="bilibili" aria-label="B站配置图文指引" title="获取方法">?</button></div>
+        </article>
+        <article class="capability-card">
+          <div class="card-top"><div class="cap-icon zhihu-icon" aria-hidden="true">知</div><span class="card-status" id="zhihu-status">读取中</span></div>
+          <h3>知乎</h3><p>搜问题 · 读回答 · 看讨论</p>
+          <div class="card-bottom"><button class="text-action" data-connect="zhihu"><span id="zhihu-action">连接</span><svg><use href="#i-arrow"/></svg></button><button class="help-button" data-connect="zhihu" aria-label="知乎配置图文指引" title="获取方法">?</button></div>
+        </article>
+      </div>
+    </section>
+    <footer class="page-footer"><span>早饭之后，开始表达。</span><span class="footer-line"></span><span>早饭精英视频助手</span></footer>
+  </main>
+
+  <dialog id="connection-dialog" aria-labelledby="connection-title">
+    <div class="dialog-heading"><div><span class="eyebrow">平台连接</span><h2 id="connection-title">连接 B 站</h2></div><button class="icon-button" data-close aria-label="关闭连接窗口"><svg><use href="#i-close"/></svg></button></div>
+    <div class="connection-layout">
+      <form id="connection-form" autocomplete="off">
+        <div class="small-status"><span class="dot"></span><span id="connection-state">未配置</span></div>
+        <div id="credential-fields"></div>
+        <p class="credential-note"><svg><use href="#i-lock"/></svg>凭据仅保存到本机</p>
+        <p id="connection-error" class="form-error" role="alert" hidden></p>
+        <button type="submit" class="primary wide" id="save-connection">保存配置<svg><use href="#i-arrow"/></svg></button>
+      </form>
+      <section class="guide" aria-labelledby="guide-title">
+        <div class="guide-title"><h3 id="guide-title">获取方法</h3><span>Chrome / Edge</span></div>
+        <ol class="guide-steps">
+          <li><span class="step-number">1</span><div class="step-content"><h4><a id="platform-link" href="https://www.bilibili.com" target="_blank" rel="noreferrer">打开 B 站 ↗</a>，登录后按 <kbd>F12</kbd></h4><div class="browser-sketch" role="img" aria-label="浏览器示意：登录网站后按F12打开开发者工具"><div class="browser-bar"><i></i><i></i><i></i><span id="sketch-domain">bilibili.com</span></div><div class="sketch-web"><span class="sketch-logo" id="sketch-logo">B 站</span><div class="sketch-lines"><b></b><b></b></div><span class="sketch-avatar"></span><kbd>F12</kbd></div></div></div></li>
+          <li><span class="step-number">2</span><div class="step-content"><h4>应用程序 → Cookie → 网站域名</h4><div class="devtools-sketch" role="img" aria-label="开发者工具示意：应用程序或Application中，展开Cookie，选择当前网站域名"><div class="devtabs"><span>元素</span><span>控制台</span><strong>应用程序</strong><span>»</span></div><div class="devtree"><span>▾ 存储</span><span>　▾ Cookie</span><strong id="tree-domain">　　https://www.bilibili.com</strong></div></div><p class="micro-note">找不到该标签？点顶栏 »，或查找 Application。</p></div></li>
+          <li><span class="step-number">3</span><div class="step-content"><h4>点选字段，复制底部的完整值</h4><div class="cookie-sketch" role="img" aria-label="Cookie示意：表格可能省略内容，应在下方Cookie Value区域复制完整值"><div class="cookie-head"><span>名称</span><span>值</span></div><div class="cookie-row"><strong id="cookie-field">SESSDATA</strong><span>••••••••…</span></div><div class="cookie-value"><span>Cookie Value</span><strong>••••••••••••••••••••••</strong><span class="value-callout">从这里复制 ↗</span></div></div><p class="micro-note" id="fields-hint">复制 SESSDATA 的值，粘贴到左侧。</p></div></li>
+        </ol>
+        <p class="guide-caption">界面示意 · 请勿将凭据公开分享</p>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="examples-dialog" class="examples-dialog" aria-labelledby="examples-title">
+    <div class="dialog-heading"><div><span class="eyebrow">风格范例</span><h2 id="examples-title">放进来，就能作为参照。</h2></div><button class="icon-button" data-close aria-label="关闭范例窗口"><svg><use href="#i-close"/></svg></button></div>
+    <div class="examples-content"><p>放入你满意的文案或视频。</p><div class="folder-path"><code id="folder-path"></code><button class="icon-button" id="copy-path" aria-label="复制文件夹路径"><svg><use href="#i-copy"/></svg></button></div><ul id="example-files"></ul><button class="primary" id="open-folder">打开文件夹<svg><use href="#i-arrow"/></svg></button></div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
