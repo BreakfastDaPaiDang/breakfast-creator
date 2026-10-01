@@ -17,7 +17,7 @@ uv run breakfast-assistant serve
 | 内容 | 路径 | 读写方式 |
 |---|---|---|
 | 用户信息 | `config/creator-profile.json` | 前端或`profile-set` |
-| 满意的文案／视频 | `assets/references/style-examples/` | 直接放文件；页面可打开文件夹或复制路径 |
+| 满意的文案／视频 | `assets/references/style-examples/` | 自己的作品放 `自己的/`，别人的放 `他人的/`，只参考局部时在文件名标“（参考开头）”等；页面可打开文件夹或复制路径 |
 | B站、知乎凭据 | `.env` | 前端或既有工具的`auth set --stdin` |
 
 用户信息格式：

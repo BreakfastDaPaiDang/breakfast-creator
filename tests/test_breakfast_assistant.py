@@ -78,6 +78,19 @@ class ConfigTests(unittest.TestCase):
         (self.config.examples / '满意的文案.md').write_text('example')
         self.assertEqual(self.config.state()['examples']['files'], ['满意的文案.md'])
 
+    def test_style_files_in_subfolders_are_counted(self):
+        own = self.config.examples / '自己的'
+        others = self.config.examples / '他人的'
+        own.mkdir()
+        others.mkdir()
+        (own / 'README.md').write_text('instructions')
+        (own / '往期.txt').write_text('example')
+        (others / '对标（参考开头）.txt').write_text('example')
+        state = self.config.state()
+        self.assertEqual(state['examples']['count'], 2)
+        self.assertEqual(state['examples']['files'], ['他人的/对标（参考开头）.txt', '自己的/往期.txt'])
+        self.assertNotIn('style_examples', state['missing_optional'])
+
 
 class HttpTests(unittest.TestCase):
     def setUp(self):

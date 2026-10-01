@@ -108,7 +108,8 @@ class Config:
 
     def state(self):
         profile, revision = self.profile()
-        files = sorted(p.name for p in self.examples.iterdir()
+        # 范例按“自己的／他人的”分子文件夹存放，递归统计，返回相对路径
+        files = sorted(p.relative_to(self.examples).as_posix() for p in self.examples.rglob("*")
                        if p.is_file() and p.name.lower() not in {"readme.md", ".gitkeep", "desktop.ini"}) if self.examples.exists() else []
         connections = {name: self.connection(name) for name in ("bilibili", "zhihu")}
         ready = bool(profile["user_info"].strip())
