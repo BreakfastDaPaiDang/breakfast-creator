@@ -30,7 +30,7 @@ uv run python -m unittest discover -s tests
 
 ## 视频制作
 
-进入制作阶段时使用 Codex / Claude Code 全局安装的 HyperFrames skill，按需通过 npx 调用，不在本项目内安装渲染依赖。口播剪辑、配音、本地转录等能力在实际需要时再添加。
+短动画用项目内的 Python 脚本逐帧渲染（PIL + numpy + ffmpeg），流程见 `docs/short-animation.md`。口播剪辑、配音、本地转录等能力在实际需要时再添加。
 
 ## 生产原则
 
