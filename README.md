@@ -40,4 +40,4 @@ uv run python -m unittest discover -s tests
 4. 高风险事实、版权、肖像、声音克隆和商业宣传必须人工审核。
 5. 默认交付 H.264/AAC MP4，并使用 ffprobe 做结构检查。
 
-详细规则见 `AGENTS.md`，品牌规范位于 `brand/`，项目模板位于 `templates/project/`，内容资产的领域语言见 `CONTEXT.md`。`media-library/` 下的目录数据库、搜索会话和媒体文件是本地运行数据，默认不进入 Git。
+详细规则见 `AGENTS.md`，品牌规范位于 `brand/`，项目模板位于 `templates/project/`，内容资产的领域语言见 `CONTEXT.md`。文案流程与两种工作模式见 `docs/copywriting.md`。`projects/`、`assets/generated/`、`media-library/` 和 `tmp/` 是本地工作数据，不进入 Git；用户信息 `config/creator-profile.json` 和 `assets/references/style-examples/自己的/` 进入 Git。

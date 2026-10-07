@@ -3,9 +3,6 @@
 .env.tmp
 .venv/
 node_modules/
-projects/*/assets/generated/
-projects/*/renders/
-projects/*/tmp/
 media-library/cache/
 media-library/assets/
 media-library/sessions/
@@ -19,8 +16,14 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .run/
-config/creator-profile.json
 config/creator-profile.json.tmp
 config/.write-lock.sqlite3*
-assets/references/style-examples/*
-!assets/references/style-examples/README.md
+
+# 本地工作数据，不进 Git（项目文件由用户自行下载归档）
+projects/
+assets/generated/
+media-library/research/
+tmp/
+
+# 风格范例：自己的作品进 Git；他人作品暂不上传（仓库公开，待用户决定）
+assets/references/style-examples/他人的/
