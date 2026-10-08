@@ -136,7 +136,7 @@ def diagnose_sources(
             "bilibili-search-primary",
             HealthStatus.OK if bili else HealthStatus.DEGRADED,
             bili or "bilibili-cli missing; yt-dlp fallback remains available",
-            None if bili else "Run `uv tool install bilibili-cli`.",
+            None if bili else "Run `uv sync` to restore the locked project dependency.",
         )
     )
     yutto = locate("yutto")
@@ -145,7 +145,7 @@ def diagnose_sources(
             "bilibili-download-primary",
             HealthStatus.OK if yutto else HealthStatus.DEGRADED,
             yutto or "yutto missing; yt-dlp fallback remains available",
-            None if yutto else "Run `uv tool install yutto`.",
+            None if yutto else "Run `uv sync` to restore the locked project dependency.",
         )
     )
 

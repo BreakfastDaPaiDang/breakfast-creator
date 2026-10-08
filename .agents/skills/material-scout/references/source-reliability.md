@@ -13,6 +13,7 @@
 ## Interpret failures
 
 - `HTTP 412` or `RateLimitError`: Bilibili anti-automation. Reduce result count and request rate; wait before retrying. Do not loop aggressively.
+- `bilibili yutto acquisition produced no files`: yutto exits 0 even when it fails. On some hosts (verified on the Linux dev box, 2026-10-08) Bilibili's `x/web-interface/view` returns 412 to yutto with or without a cookie; acquisition then falls back to yt-dlp, which is expected rather than a missing dependency.
 - `HTTP 429`: source throttling. Keep media already acquired. Retry captions later.
 - YouTube JavaScript/EJS error: run `uv sync`, then `material-scout doctor`; Node 22+ or Deno 2.3+ is required.
 - YouTube PO Token/403 error: install and configure a trusted PO Token provider only then. Tokens may be video-bound; never persist a token in a manifest or log.
