@@ -25,5 +25,4 @@ assets/generated/
 media-library/research/
 tmp/
 
-# 风格范例：自己的作品进 Git；他人作品暂不上传（仓库公开，待用户决定）
-assets/references/style-examples/他人的/
+# 风格范例：自己的作品和用户明确选定的他人作品进 Git
